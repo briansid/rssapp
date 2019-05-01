@@ -1,75 +1,82 @@
-<StartPage>:
-    AnchorLayout:
-        anchor_x: 'center'
-        anchor_y: 'top'
-        BoxLayout:
-            orientation: 'vertical'
-            Label:
-                text: 'Спортивны новости'
-                font_size: 30
-                size_hint_y: None
+<MyScreenManager>:
+    FirstScreen:
+        name: 'first'
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'top'
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: 'Спортивны новости'
+                    font_size: 30
+                    size_hint_y: None
+                    height: 100
+                BoxLayout:
+                    # canvas:
+                    #     Color:
+                    #         rgba: (1, 0, 0, 1)
+                    #     Rectangle:
+                    #         pos: self.pos
+                    #         size: self.size
+                    canvas:
+                        Rectangle:
+                            source: 'football.png'
+                            pos: self.x, self.y
+                            size: 100, 100
+                        Color:
+                            rgba: (1, 0, 0, 1)
+                    Label:
+                        text: 'Футбол'
+                        font_size: 30
+                        size_hint_y: None
+                        height: 50
+
+                    ToggleButton:
+                        text: '+'
+                        font_size: 50
+                        size_hint: None, None
+                        height: 100
+                        width: 100
+                BoxLayout:
+                    canvas:
+                        Rectangle:
+                            source: 'hockey.png'
+                            pos: self.x, self.y
+                            size: 100, 100
+                        Color:
+                            rgba: (1, 0, 0, 1)
+                    Label:
+                        text:
+                            'Хокей'
+                        font_size: 30
+                        size_hint_y: None
+                        height: 100
+
+                    ToggleButton:
+                        id: 'hockey'
+                        text: '+'
+                        font_size: 50
+                        size_hint: None, None
+                        height: 100
+                        width: 100
+                Widget:
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'bottom'
+            # canvas:
+            #     Color:
+            #         rgba: (1, 0, 0, 1)
+            #     Rectangle:
+            #         pos: self.pos
+            #         size: self.size
+            Button:
+                text: 'Продолжить'
+                size_hint: (None, None)
                 height: 100
-            BoxLayout:
-                # canvas:
-                #     Color:
-                #         rgba: (1, 0, 0, 1)
-                #     Rectangle:
-                #         pos: self.pos
-                #         size: self.size
-                canvas:
-                    Rectangle:
-                        source: 'football.png'
-                        pos: self.x, self.y
-                        size: 100, 100
-                    Color:
-                        rgba: (1, 0, 0, 1)
-                Label:
-                    text: 'Футбол'
-                    font_size: 30
-                    size_hint_y: None
-                    height: 50
-
-                ToggleButton:
-                    text: '+'
-                    font_size: 50
-                    size_hint: None, None
-                    height: 100
-                    width: 100
-            BoxLayout:
-                canvas:
-                    Rectangle:
-                        source: 'hockey.png'
-                        pos: self.x, self.y
-                        size: 100, 100
-                    Color:
-                        rgba: (1, 0, 0, 1)
-                Label:
-                    text:
-                        'Хокей'
-                    font_size: 30
-                    size_hint_y: None
-                    height: 100
-
-                ToggleButton:
-                    id: 'hockey'
-                    text: '+'
-                    font_size: 50
-                    size_hint: None, None
-                    height: 100
-                    width: 100
-            Widget:
-    AnchorLayout:
-        anchor_x: 'center'
-        anchor_y: 'bottom'
-        # canvas:
-        #     Color:
-        #         rgba: (1, 0, 0, 1)
-        #     Rectangle:
-        #         pos: self.pos
-        #         size: self.size
-        Button:
-            text: 'Продолжить'
-            size_hint: (None, None)
-            height: 100
-            width: 200
-            font_size: 30
+                width: 200
+                font_size: 30
+                on_release: app.root.current = 'second'
+    SecondScreen:
+        name: 'second'
+        Label:
+            text: 'You are on the second screen'
