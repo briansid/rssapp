@@ -32,6 +32,7 @@
                         height: 50
 
                     ToggleButton:
+                        id: football
                         text: '+'
                         font_size: 50
                         size_hint: None, None
@@ -53,7 +54,7 @@
                         height: 100
 
                     ToggleButton:
-                        id: 'hockey'
+                        id: _hockey
                         text: '+'
                         font_size: 50
                         size_hint: None, None
@@ -78,5 +79,36 @@
                 on_release: app.root.current = 'second'
     SecondScreen:
         name: 'second'
-        Label:
-            text: 'You are on the second screen'
+        hockey: _hockey
+        FloatLayout:
+            BoxLayout:
+                orientation: "horizontal"
+                pos_hint: {"x": 0, "y": 0}
+                MyGrid:
+                    id: grid
+                    # rows: 4
+                    cols: 2
+                    padding: 10
+                    spacing: 10
+                    row_force_default: True
+                    row_default_height: 40
+                    # Label:
+                    #     text: 'Title'
+                    #     size_hint_x: None
+                    #     width: 200
+                    #     font_size: 24
+                    # RelativeLayout:
+                    #     canvas:
+                    #         Rectangle:
+                    #             # pos: 10, 10
+                    #             # size: 80, 80
+                    # Label:
+                    #     text: 'Title'
+                    #     size_hint_x: None
+                    #     width: 200
+                    #     font_size: 24
+                    # RelativeLayout:
+                    #     canvas:
+                    #         Rectangle:
+                    #             # pos: 10, 10
+                    #             # size: 80, 80
