@@ -79,36 +79,13 @@
                 on_release: app.root.current = 'second'
     SecondScreen:
         name: 'second'
-        hockey: _hockey
-        FloatLayout:
-            BoxLayout:
-                orientation: "horizontal"
-                pos_hint: {"x": 0, "y": 0}
-                MyGrid:
-                    id: grid
-                    # rows: 4
-                    cols: 2
-                    padding: 10
-                    spacing: 10
-                    row_force_default: True
-                    row_default_height: 40
-                    # Label:
-                    #     text: 'Title'
-                    #     size_hint_x: None
-                    #     width: 200
-                    #     font_size: 24
-                    # RelativeLayout:
-                    #     canvas:
-                    #         Rectangle:
-                    #             # pos: 10, 10
-                    #             # size: 80, 80
-                    # Label:
-                    #     text: 'Title'
-                    #     size_hint_x: None
-                    #     width: 200
-                    #     font_size: 24
-                    # RelativeLayout:
-                    #     canvas:
-                    #         Rectangle:
-                    #             # pos: 10, 10
-                    #             # size: 80, 80
+        ScrollView:
+            MyGrid:
+                id: layout_content
+                size_hint_y: None
+                height: self.minimum_height
+                cols: 2
+                row_default_height: '150dp'
+                row_force_default: True
+                spacing: 5
+                padding: 5
