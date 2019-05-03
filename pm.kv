@@ -2,6 +2,8 @@
     football_rss: _football
     hockey_rss: _hockey
     rss_grid: _rss_grid
+    show_more_button: _show_more_button
+    rss_box: _rss_box
     FirstScreen:
         name: 'first'
         AnchorLayout:
@@ -84,7 +86,9 @@
     SecondScreen:
         name: 'second'
         BoxLayout:
+            id: _rss_box
             orientation: 'vertical'
+            padding: 5
             ScrollView:
                 MyGrid:
                     id: _rss_grid
@@ -96,6 +100,7 @@
                     spacing: 5
                     padding: 5
             Button:
+                id: _show_more_button
                 text: "Показать еще"
                 font_size: 20
                 size_hint: (None, None)

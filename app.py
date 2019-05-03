@@ -29,12 +29,12 @@ class MyGrid(GridLayout):
     pass
 
 
-
-
 class MyScreenManager(ScreenManager):
     hockey_rss = ObjectProperty()
     football_rss = ObjectProperty()
     rss_grid = ObjectProperty()
+    show_more_button = ObjectProperty()
+    rss_box = ObjectProperty()
 
     def open_rss(self):
         football = True if self.football_rss.state == "down" else False
@@ -86,6 +86,9 @@ class MyScreenManager(ScreenManager):
 
             self.rss_grid.add_widget(Label(text=text, font_size=20, text_size=(self.width/2, None), pos_hint={'x': 0, 'top': 1}))
             self.rss_grid.add_widget(AsyncImage(source=feed['media_content'][0]['url'], size_hint_y=None, height=150))
+
+            if not self.feeds:
+                self.rss_box.remove_widget(self.show_more_button)
 
 
 class PMApp(App):
