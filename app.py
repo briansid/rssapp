@@ -40,14 +40,22 @@ class MyScreenManager(ScreenManager):
         grid = self.rss_grid
         football = True if self.football_rss.state == "down" else False
         hockey = True if self.hockey_rss.state == "down" else False
+        feeds = []
         if football:
-            feeds = feedparser.parse('https://www.sport.ru/rssfeeds/football.rss')
+            football_feeds = feedparser.parse('https://www.sport.ru/rssfeeds/football.rss')
+            [feeds.append(feed) for feed in football_feeds['entries']]
         if hockey:
-            feeds = feedparser.parse('https://www.sport.ru/rssfeeds/hockey.rss')
+            hockey_feeds = feedparser.parse('https://www.sport.ru/rssfeeds/hockey.rss')
+            [feeds.append(feed) for feed in hockey_feeds['entries']]
 
-        for feed in feeds['entries']:
-            pd = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
-            pd = datetime.now() - pd
+        # Convert feeds date to datetime
+        for feed in feeds:
+            feed['published'] = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
+
+        feeds = sorted(feeds, key=lambda i: i['published'], reverse=True)
+
+        for feed in feeds:
+            pd = datetime.now() - feed['published']
             pd = int(pd.total_seconds())
 
             if pd <= 60:
