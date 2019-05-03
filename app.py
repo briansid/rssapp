@@ -11,6 +11,8 @@ from kivy.properties import ObjectProperty
 from kivy.uix.floatlayout import FloatLayout
 from datetime import datetime
 from kivy.uix.scrollview import ScrollView
+from kivy.properties import StringProperty
+from kivy.properties import ListProperty
 
 
 class FirstScreen(Screen):
@@ -18,6 +20,10 @@ class FirstScreen(Screen):
 
 
 class SecondScreen(Screen):
+    pass
+
+
+class ThirdScreen(Screen):
     pass
 
 
@@ -29,33 +35,9 @@ class MyGrid(GridLayout):
     pass
 
 
-class MyScreenManager(ScreenManager):
-    hockey_rss = ObjectProperty()
-    football_rss = ObjectProperty()
-    rss_grid = ObjectProperty()
-    show_more_button = ObjectProperty()
-    rss_box = ObjectProperty()
-
-    def open_rss(self):
-        football = True if self.football_rss.state == "down" else False
-        hockey = True if self.hockey_rss.state == "down" else False
-        feeds = []
-        if football:
-            football_feeds = feedparser.parse('https://www.sport.ru/rssfeeds/football.rss')
-            [feeds.append(feed) for feed in football_feeds['entries']]
-        if hockey:
-            hockey_feeds = feedparser.parse('https://www.sport.ru/rssfeeds/hockey.rss')
-            [feeds.append(feed) for feed in hockey_feeds['entries']]
-
-        # Convert feeds date to datetime
-        for feed in feeds:
-            feed['published'] = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
-
-        self.feeds = sorted(feeds, key=lambda i: i['published'], reverse=True)
-
-        self.show_more()
-
-        self.current = 'second'
+class RSSBox(BoxLayout):
+    title = StringProperty()
+    feeds = ListProperty()
 
     def show_more(self):
         for feed in self.feeds[:5]:
@@ -89,6 +71,53 @@ class MyScreenManager(ScreenManager):
 
             if not self.feeds:
                 self.rss_box.remove_widget(self.show_more_button)
+
+
+class MyScreenManager(ScreenManager):
+    hockey_rss = ObjectProperty()
+    football_rss = ObjectProperty()
+    rss_grid = ObjectProperty()
+    show_more_button = ObjectProperty()
+    single_rss = ObjectProperty()
+
+    def open_rss(self):
+        football = True if self.football_rss.state == "down" else False
+        hockey = True if self.hockey_rss.state == "down" else False
+
+        if hockey and football:
+            football_feeds = feedparser.parse('https://www.sport.ru/rssfeeds/football.rss')
+            for feed in football_feeds['entries']:
+                feed['published'] = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
+            hockey_feeds = feedparser.parse('https://www.sport.ru/rssfeeds/hockey.rss')
+            for feed in hockey_feeds['entries']:
+                feed['published'] = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
+
+            self.football_box.title = 'Футбол'
+            self.football_box.feeds = football_feeds['entries']
+            self.football_box.show_more()
+
+            self.hockey_box.title = 'Хокей'
+            self.hockey_box.feeds = hockey_feeds['entries']
+            self.hockey_box.show_more()
+
+            self.current = 'third'
+        else:
+            if football:
+                feeds = feedparser.parse('https://www.sport.ru/rssfeeds/football.rss')
+                self.single_rss.title = 'Футбол'
+            if hockey:
+                self.single_rss.title = 'Хокей'
+                feeds = feedparser.parse('https://www.sport.ru/rssfeeds/hockey.rss')
+
+            for feed in feeds['entries']:
+                feed['published'] = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
+
+            self.single_rss.feeds = feeds['entries']
+
+            self.single_rss.show_more()
+
+            self.current = 'second'
+
 
 
 class PMApp(App):

@@ -1,9 +1,44 @@
-<MyScreenManager>:
-    football_rss: _football
-    hockey_rss: _hockey
+<RSSBox>:
+    orientation: 'vertical'
+    spacing: 5
+    padding: 5
+
+    title:
     rss_grid: _rss_grid
     show_more_button: _show_more_button
-    rss_box: _rss_box
+
+    Label:
+        text: root.title
+        font_size: 30
+        size_hint: (None, None)
+        size: (self.texture_size[0], self.texture_size[1])
+    ScrollView:
+        GridLayout:
+            id: _rss_grid
+            size_hint_y: None
+            height: self.minimum_height
+            cols: 2
+            row_default_height: '150dp'
+            row_force_default: True
+            spacing: 5
+            padding: 5
+    Button:
+        id: _show_more_button
+        text: "Показать еще"
+        font_size: 20
+        size_hint: (None, None)
+        height: 80
+        width: 170
+        pos_hint: {'center_x': 0.5, 'y': 0}
+        on_release: root.show_more()
+
+
+<MyScreenManager>:
+    single_rss: _single_rss
+    hockey_rss: _hockey
+    football_rss: _football
+    football_box: _football_box
+    hockey_box: _hockey_box
     FirstScreen:
         name: 'first'
         AnchorLayout:
@@ -85,26 +120,15 @@
                 on_release: root.open_rss()
     SecondScreen:
         name: 'second'
+        RSSBox:
+            id: _single_rss
+    ThirdScreen:
+        name: 'third'
         BoxLayout:
-            id: _rss_box
             orientation: 'vertical'
             padding: 5
-            ScrollView:
-                MyGrid:
-                    id: _rss_grid
-                    size_hint_y: None
-                    height: self.minimum_height
-                    cols: 2
-                    row_default_height: '150dp'
-                    row_force_default: True
-                    spacing: 5
-                    padding: 5
-            Button:
-                id: _show_more_button
-                text: "Показать еще"
-                font_size: 20
-                size_hint: (None, None)
-                height: 80
-                width: 170
-                pos_hint: {'center_x': 0.5, 'y': 0}
-                on_release: root.show_more()
+            spacing: 5
+            RSSBox:
+                id: _football_box
+            RSSBox:
+                id: _hockey_box
