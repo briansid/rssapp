@@ -10,6 +10,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty
 from kivy.uix.floatlayout import FloatLayout
 from datetime import datetime
+from kivy.uix.scrollview import ScrollView
 
 
 class FirstScreen(Screen):
@@ -25,15 +26,26 @@ class Controller(FloatLayout):
 
 
 class MyGrid(GridLayout):
-    feeds = feedparser.parse('https://www.sport.ru/rssfeeds/football.rss')
+    pass
 
-    def __init__(self, **kwargs):
-        super(MyGrid, self).__init__(**kwargs)
-        # hockey = self.ids['_hockey']
-        # print(hockey.state)
-        # if hockey.state == 'down':
 
-        for feed in self.feeds['entries']:
+
+
+class MyScreenManager(ScreenManager):
+    hockey_rss = ObjectProperty()
+    football_rss = ObjectProperty()
+    rss_grid = ObjectProperty()
+
+    def print(self):
+        grid = self.rss_grid
+        football = True if self.football_rss.state == "down" else False
+        hockey = True if self.hockey_rss.state == "down" else False
+        if football:
+            feeds = feedparser.parse('https://www.sport.ru/rssfeeds/football.rss')
+        if hockey:
+            feeds = feedparser.parse('https://www.sport.ru/rssfeeds/hockey.rss')
+
+        for feed in feeds['entries']:
             pd = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
             pd = datetime.now() - pd
             pd = int(pd.total_seconds())
@@ -59,12 +71,10 @@ class MyGrid(GridLayout):
             text += '\n'
             text += pd
 
-            self.add_widget(Label(text=text, font_size=20, text_size=(self.width*3, None), pos_hint={'x': 0, 'top': 1}))
-            self.add_widget(AsyncImage(source=feed['media_content'][0]['url'], size_hint_y=None, height=150))
+            self.rss_grid.add_widget(Label(text=text, font_size=20, text_size=(self.rss_grid.width*3, None), pos_hint={'x': 0, 'top': 1}))
+            self.rss_grid.add_widget(AsyncImage(source=feed['media_content'][0]['url'], size_hint_y=None, height=150))
 
-
-class MyScreenManager(ScreenManager):
-    pass
+        self.current = 'second'
 
 
 class PMApp(App):
