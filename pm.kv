@@ -80,16 +80,26 @@
                 width: 200
                 font_size: 30
                 # on_release: app.root.current = 'second'
-                on_release: root.print()
+                on_release: root.open_rss()
     SecondScreen:
         name: 'second'
-        ScrollView:
-            MyGrid:
-                id: _rss_grid
-                size_hint_y: None
-                height: self.minimum_height
-                cols: 2
-                row_default_height: '150dp'
-                row_force_default: True
-                spacing: 5
-                padding: 5
+        BoxLayout:
+            orientation: 'vertical'
+            ScrollView:
+                MyGrid:
+                    id: _rss_grid
+                    size_hint_y: None
+                    height: self.minimum_height
+                    cols: 2
+                    row_default_height: '150dp'
+                    row_force_default: True
+                    spacing: 5
+                    padding: 5
+            Button:
+                text: "Показать еще"
+                font_size: 20
+                size_hint: (None, None)
+                height: 80
+                width: 170
+                pos_hint: {'center_x': 0.5, 'y': 0}
+                on_release: root.show_more()

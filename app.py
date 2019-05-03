@@ -36,8 +36,7 @@ class MyScreenManager(ScreenManager):
     football_rss = ObjectProperty()
     rss_grid = ObjectProperty()
 
-    def print(self):
-        grid = self.rss_grid
+    def open_rss(self):
         football = True if self.football_rss.state == "down" else False
         hockey = True if self.hockey_rss.state == "down" else False
         feeds = []
@@ -52,9 +51,15 @@ class MyScreenManager(ScreenManager):
         for feed in feeds:
             feed['published'] = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
 
-        feeds = sorted(feeds, key=lambda i: i['published'], reverse=True)
+        self.feeds = sorted(feeds, key=lambda i: i['published'], reverse=True)
 
-        for feed in feeds:
+        self.show_more()
+
+        self.current = 'second'
+
+    def show_more(self):
+        for feed in self.feeds[:5]:
+            self.feeds.remove(feed)
             pd = datetime.now() - feed['published']
             pd = int(pd.total_seconds())
 
@@ -79,10 +84,8 @@ class MyScreenManager(ScreenManager):
             text += '\n'
             text += pd
 
-            self.rss_grid.add_widget(Label(text=text, font_size=20, text_size=(self.rss_grid.width*3, None), pos_hint={'x': 0, 'top': 1}))
+            self.rss_grid.add_widget(Label(text=text, font_size=20, text_size=(self.width/2, None), pos_hint={'x': 0, 'top': 1}))
             self.rss_grid.add_widget(AsyncImage(source=feed['media_content'][0]['url'], size_hint_y=None, height=150))
-
-        self.current = 'second'
 
 
 class PMApp(App):
