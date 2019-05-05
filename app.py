@@ -114,10 +114,11 @@ class MyScreenManager(ScreenManager):
 
             self.single_rss.feeds = feeds['entries']
 
+            # self.single_rss.show_more_button.on_release = self.single_rss.show_more()
+
             self.single_rss.show_more()
 
             self.current = 'second'
-
 
 
 class PMApp(App):
