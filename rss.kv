@@ -1,0 +1,64 @@
+<MyScreenManager>:
+    MenuScreen:
+        name: 'menu'
+    NewsScreen:
+        name: 'news'
+    DuoNews:
+        name: 'duo'
+
+<MenuScreen>:
+    football_subscription: football_subscription
+    hockey_subscription: hockey_subscription
+
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: "Спортивные новости"
+        BoxLayout:
+            Image:
+                source: 'football.png'
+            Label:
+                text: "Футбол"
+            ToggleButton:
+                id: football_subscription
+                text: "+"
+        BoxLayout:
+            Image:
+                source: 'hockey.png'
+            Label:
+                text: "Хокей"
+            ToggleButton:
+                id: hockey_subscription
+                text: "+"
+        Button:
+            text: "Продолжить"
+            on_release: app.root.next_screen()
+
+
+<RssBox>:
+    title: ""
+    rss_grid: _rss_grid
+    orientation: 'vertical'
+    Label:
+        text: root.title
+        font_size: 30
+        size_hint_y: None
+        height: 50
+    ScrollView:
+        GridLayout:
+            id: _rss_grid
+            size_hint_y: None
+            height: self.minimum_height
+            cols: 2
+            row_default_height: '150dp'
+            row_force_default: True
+            spacing: 5
+            padding: 5
+    Button:
+        text: "Показать еще"
+        font_size: 20
+        size_hint: (None, None)
+        height: 80
+        width: 170
+        on_press: root.show_more()
+
