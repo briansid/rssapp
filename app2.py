@@ -7,24 +7,17 @@ import feedparser
 from kivy.uix.label import Label
 from kivy.uix.image import AsyncImage
 from kivy.clock import Clock
-
+from kivy.uix.button import Button
 
 class MenuScreen(Screen):
-    football_subscription = ObjectProperty()
-    hockey_subscription = ObjectProperty()
-
-    def next_screen(self):
-        print(self.football_subscription.state)
-        print(self.hockey_subscription.state)
-
-    def print(self):
-        print('Im clicked')
+    pass
 
 
 class RssBox(BoxLayout):
     feeds = ListProperty()
     title = StringProperty()
     rss_grid = ObjectProperty()
+    action_button = ObjectProperty()
 
     def __init__(self, **kwargs):
         super(RssBox, self).__init__(**kwargs)
@@ -33,7 +26,10 @@ class RssBox(BoxLayout):
     def show_more(self, *args):
         for feed in self.feeds[:5]:
             self.feeds.remove(feed)
-            feed['published'] = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
+            try:
+                feed['published'] = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
+            except:
+                pass
             pd = datetime.now() - feed['published']
             pd = int(pd.total_seconds())
 
@@ -59,10 +55,14 @@ class RssBox(BoxLayout):
             text += pd
 
             self.rss_grid.add_widget(Label(text=text, font_size=20, text_size=(self.width/2, None)))
-            self.rss_grid.add_widget(AsyncImage(source=feed['media_content'][0]['url'], size_hint_y=None, height=150))
+            try:
+                image = feed['media_content'][0]['url']
+            except:
+                image = 'no_image.svg'
+            self.rss_grid.add_widget(AsyncImage(source=image, size_hint_y=None, height=150))
 
             if not self.feeds:
-                self.remove_widget(self.show_more_button)
+                self.remove_widget(self.action_button)
 
 
 class NewsScreen(Screen):
@@ -73,7 +73,19 @@ class DuoNews(Screen):
     pass
 
 
+class ShowMoreButton(Button):
+    pass
+
+
+class ShowAllNewsButton(Button):
+    pass
+
+
 class MyScreenManager(ScreenManager):
+    def add_news_screen(self, feeds, title):
+        rssbox = RssBox(feeds=feeds, title=title)
+        self.get_screen('news').add_widget(rssbox)
+        self.current = 'news'
 
     def next_screen(self):
         football = True if self.get_screen('menu').football_subscription.state == "down" else False
@@ -83,11 +95,20 @@ class MyScreenManager(ScreenManager):
             football_feeds = feedparser.parse('https://www.sport.ru/rssfeeds/football.rss')
             hockey_feeds = feedparser.parse('https://www.sport.ru/rssfeeds/hockey.rss')
             duobox = BoxLayout(orientation="vertical")
-            duobox.add_widget(RssBox(feeds=football_feeds['entries'], title="Фубол"))
-            duobox.add_widget(RssBox(feeds=hockey_feeds['entries'], title="Хокей"))
+
+            football_box = RssBox(feeds=football_feeds['entries'], title="Фубол")
+            football_box.remove_widget(football_box.action_button)
+            football_box.add_widget(ShowAllNewsButton(text="Все новости футбола"))
+            duobox.add_widget(football_box)
+
+
+            hockey_box = RssBox(feeds=hockey_feeds['entries'], title="Хокей")
+            hockey_box.remove_widget(hockey_box.action_button)
+            hockey_box.add_widget(ShowAllNewsButton(text="Все новости хокея"))
+            duobox.add_widget(hockey_box)
+
             self.get_screen('duo').add_widget(duobox)
             self.current = "duo"
-
         else:
             if football:
                 feeds = feedparser.parse('https://www.sport.ru/rssfeeds/football.rss')
@@ -96,9 +117,7 @@ class MyScreenManager(ScreenManager):
                 feeds = feedparser.parse('https://www.sport.ru/rssfeeds/hockey.rss')
                 title = "Хокей"
 
-            rssbox = RssBox(feeds=feeds['entries'], title=title)
-            self.get_screen('news').add_widget(rssbox)
-            self.current = 'news'
+            self.add_news_screen(feeds['entries'], title)
 
 
 # sm = ScreenManager()

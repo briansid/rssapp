@@ -35,9 +35,28 @@
             on_release: app.root.next_screen()
 
 
+<ShowMoreButton>:
+    text: "Показать еще"
+    font_size: 20
+    size_hint: (None, None)
+    size: (self.texture_size[0]+10, self.texture_size[1]+10)
+    # height: 80
+    # width: 170
+    on_press: root.parent.show_more()
+
+
+<ShowAllNewsButton@Button>:
+    text:
+    font_size: 20
+    size_hint: (None, None)
+    size: (self.texture_size[0]+10, self.texture_size[1]+10)
+    on_press: app.root.add_news_screen(root.parent.feeds, root.parent.title)
+
+
 <RssBox>:
     title: ""
     rss_grid: _rss_grid
+    action_button: _action_button
     orientation: 'vertical'
     Label:
         text: root.title
@@ -54,11 +73,9 @@
             row_force_default: True
             spacing: 5
             padding: 5
-    Button:
-        text: "Показать еще"
-        font_size: 20
-        size_hint: (None, None)
-        height: 80
-        width: 170
-        on_press: root.show_more()
+    ShowMoreButton:
+        id: _action_button
+
+
+
 
