@@ -9,6 +9,7 @@ from kivy.uix.image import AsyncImage
 from kivy.clock import Clock
 from kivy.uix.button import Button
 
+
 class MenuScreen(Screen):
     pass
 
@@ -56,7 +57,11 @@ class RssBox(BoxLayout):
             text += '\n'
             text += pd
 
-            self.rss_grid.add_widget(Label(text=text, font_size=20, text_size=(self.width/2, None)))
+            self.rss_grid.add_widget(ClickableLabel(
+                    text=text, link=feed['link'],
+                    font_size=20, text_size=(self.width/2, None)
+            ))
+
             try:
                 image = feed['media_content'][0]['url']
             except:
@@ -81,6 +86,14 @@ class ShowMoreButton(Button):
 
 class ShowAllNewsButton(Button):
     pass
+
+
+class ClickableLabel(Label):
+    link = StringProperty()
+
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            print(self.link)
 
 
 class MyScreenManager(ScreenManager):
