@@ -22,6 +22,8 @@ class RssBox(BoxLayout):
     def __init__(self, **kwargs):
         super(RssBox, self).__init__(**kwargs)
         Clock.schedule_once(self.show_more, 0)
+        # Store a copy of all feeds for duo category
+        self.all_feeds = self.feeds.copy()
 
     def show_more(self, *args):
         for feed in self.feeds[:5]:
@@ -100,7 +102,6 @@ class MyScreenManager(ScreenManager):
             football_box.remove_widget(football_box.action_button)
             football_box.add_widget(ShowAllNewsButton(text="Все новости футбола"))
             duobox.add_widget(football_box)
-
 
             hockey_box = RssBox(feeds=hockey_feeds['entries'], title="Хокей")
             hockey_box.remove_widget(hockey_box.action_button)

@@ -6,7 +6,7 @@
     DuoNews:
         name: 'duo'
 
-<MenuScreen>:
+<MenuScreen@Screen>:
     football_subscription: football_subscription
     hockey_subscription: hockey_subscription
 
@@ -44,13 +44,12 @@
     # width: 170
     on_press: root.parent.show_more()
 
-
 <ShowAllNewsButton@Button>:
     text:
     font_size: 20
     size_hint: (None, None)
     size: (self.texture_size[0]+10, self.texture_size[1]+10)
-    on_press: app.root.add_news_screen(root.parent.feeds, root.parent.title)
+    on_press: app.root.add_news_screen(root.parent.all_feeds, root.parent.title)
 
 
 <RssBox>:
