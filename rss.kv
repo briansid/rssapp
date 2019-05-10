@@ -9,9 +9,30 @@
 <MenuScreen@Screen>:
     football_subscription: football_subscription
     hockey_subscription: hockey_subscription
+    # action_bar: _action_bar
 
     BoxLayout:
         orientation: 'vertical'
+        ActionBar:
+            # id: _action_bar
+            ActionView:
+                use_separator: True
+                ActionPrevious:
+                    title: "Спортивные Новости"
+                    with_previous: False
+                ActionToggleButton:
+                    text: "Выбор категори"
+                    group: "action"
+                    state: "down"
+                    on_release:
+                        app.root.transition.direction = 'left'
+                        app.root.current = 'menu'
+                ActionToggleButton:
+                    text: "Мои подписки"
+                    group: "action"
+                    on_release:
+                        app.root.transition.direction = 'left'
+                        app.root.next_screen()
         Label:
             text: "Спортивные новости"
         BoxLayout:
@@ -32,7 +53,9 @@
                 text: "+"
         Button:
             text: "Продолжить"
-            on_release: app.root.next_screen()
+            on_release:
+                app.root.transition.direction = 'left'
+                app.root.next_screen()
 
 
 <ShowMoreButton>:
@@ -40,8 +63,6 @@
     font_size: 20
     size_hint: (None, None)
     size: (self.texture_size[0]+10, self.texture_size[1]+10)
-    # height: 80
-    # width: 170
     on_press: root.parent.show_more()
 
 <ShowAllNewsButton>:
@@ -56,7 +77,29 @@
     title: ""
     rss_grid: _rss_grid
     action_button: _action_button
+    action_bar: _action_bar
     orientation: 'vertical'
+    ActionBar:
+        id: _action_bar
+        ActionView:
+            use_separator: True
+            ActionPrevious:
+                title: root.title
+                with_previous: False
+            ActionToggleButton:
+                text: "Выбор категори"
+                group: "action"
+                on_release:
+                    root.clear_widgets()
+                    app.root.transition.direction = 'right'
+                    app.root.current = 'menu'
+            ActionToggleButton:
+                text: "Мои подписки"
+                state: "down"
+                group: "action"
+                on_release:
+                    app.root.transition.direction = 'right'
+                    app.root.current = 'news'
     Label:
         text: root.title
         font_size: 30

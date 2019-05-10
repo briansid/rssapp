@@ -8,6 +8,7 @@ from kivy.uix.label import Label
 from kivy.uix.image import AsyncImage
 from kivy.clock import Clock
 from kivy.uix.button import Button
+from kivy.uix.widget import Widget
 
 
 class MenuScreen(Screen):
@@ -19,6 +20,7 @@ class RssBox(BoxLayout):
     title = StringProperty()
     rss_grid = ObjectProperty()
     action_button = ObjectProperty()
+    action_bar = ObjectProperty()
 
     def __init__(self, **kwargs):
         super(RssBox, self).__init__(**kwargs)
@@ -66,7 +68,11 @@ class RssBox(BoxLayout):
                 image = feed['media_content'][0]['url']
             except:
                 image = 'no_image.svg'
-            self.rss_grid.add_widget(AsyncImage(source=image, size_hint_y=None, height=150))
+
+            self.rss_grid.add_widget(ClickableImage(
+                source=image, link=feed['link'],
+                size_hint_y=None, height=150
+            ))
 
             if not self.feeds:
                 self.remove_widget(self.action_button)
@@ -96,6 +102,14 @@ class ClickableLabel(Label):
             print(self.link)
 
 
+class ClickableImage(AsyncImage):
+    link = StringProperty()
+
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            print(self.link)
+
+
 class MyScreenManager(ScreenManager):
     def add_news_screen(self, feeds, title):
         rssbox = RssBox(feeds=feeds, title=title)
@@ -118,6 +132,7 @@ class MyScreenManager(ScreenManager):
 
             hockey_box = RssBox(feeds=hockey_feeds['entries'], title="Хокей")
             hockey_box.remove_widget(hockey_box.action_button)
+            hockey_box.remove_widget(hockey_box.action_bar)
             hockey_box.add_widget(ShowAllNewsButton(text="Все новости хокея"))
             duobox.add_widget(hockey_box)
 
