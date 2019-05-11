@@ -11,6 +11,7 @@ from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 
 
+
 class MenuScreen(Screen):
     pass
 
@@ -21,6 +22,7 @@ class RssBox(BoxLayout):
     rss_grid = ObjectProperty()
     action_button = ObjectProperty()
     action_bar = ObjectProperty()
+    search = ObjectProperty()
 
     def __init__(self, **kwargs):
         super(RssBox, self).__init__(**kwargs)
@@ -28,9 +30,16 @@ class RssBox(BoxLayout):
         # Store a copy of all feeds for duo category
         self.all_feeds = self.feeds.copy()
 
-    def show_more(self, *args):
-        for feed in self.feeds[:5]:
-            self.feeds.remove(feed)
+    def show_more(self, feeds=None, *args):
+        # if not feeds:
+        #     feeds = self.feeds
+        #     print('FEEEEEEEEDS')
+        if feeds and not isinstance(feeds, float):
+            feeds = self.feeds
+        else:
+            feeds = self.feeds
+        for feed in feeds[:5]:
+            feeds.remove(feed)
             try:
                 feed['published'] = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
             except:
@@ -74,8 +83,30 @@ class RssBox(BoxLayout):
                 size_hint_y=None, height=150
             ))
 
-            if not self.feeds:
+            if not feeds:
                 self.remove_widget(self.action_button)
+
+
+    def search_feed(self):
+        self.rss_grid.clear_widgets()
+
+        if not self.search.text:
+            self.feeds = self.all_feeds
+            self.show_more()
+
+        match_feeds = []
+
+        for feed in self.all_feeds:
+            if self.search.text.lower() in feed['title'].lower():
+                match_feeds.append(feed)
+        print([m['title'] for m in match_feeds])
+
+        if match_feeds:
+            self.show_more(feeds=match_feeds)
+        else:
+            self.rss_grid.add_widget(Label(text="По Вашему запросу ничего не найдено"))
+
+
 
 
 class NewsScreen(Screen):

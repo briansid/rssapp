@@ -78,6 +78,7 @@
     rss_grid: _rss_grid
     action_button: _action_button
     action_bar: _action_bar
+    search: _search
     orientation: 'vertical'
     ActionBar:
         id: _action_bar
@@ -100,6 +101,11 @@
                 on_release:
                     app.root.transition.direction = 'right'
                     app.root.current = 'news'
+    TextInput:
+        id: _search
+        size_hint_y: None
+        hight: 5
+        on_text: root.search_feed()
     Label:
         text: root.title
         font_size: 30
@@ -117,7 +123,3 @@
             padding: 5
     ShowMoreButton:
         id: _action_button
-
-
-
-
