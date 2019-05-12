@@ -9,14 +9,19 @@ from kivy.uix.image import AsyncImage
 from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.widget import Widget
+from kivy.core.window import Window
+from kivy.lang import Builder
 
 
+# Window.clearcolor = (1, 1, 1, 1)
+# Builder.load_file('style.kv')
 
 class MenuScreen(Screen):
     pass
 
 
 class RssBox(BoxLayout):
+    search_previous = ''
     feeds = ListProperty()
     title = StringProperty()
     rss_grid = ObjectProperty()
@@ -36,74 +41,85 @@ class RssBox(BoxLayout):
         #     print('FEEEEEEEEDS')
         if not feeds or isinstance(feeds, float):
             feeds = self.feeds
-        for feed in feeds[:5]:
-            feeds.remove(feed)
-            try:
-                feed['published'] = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
-            except:
-                pass
-            pd = datetime.now() - feed['published']
-            pd = int(pd.total_seconds())
+        if feeds and not isinstance(feeds, float):
+            print('There is feeds!')
+            print(feeds)
+            for feed in feeds[:5]:
+                feeds.remove(feed)
+                try:
+                    feed['published'] = datetime.strptime(feed['published'], '%Y-%m-%dT%H:%M:%S+00:00')
+                except:
+                    pass
+                pd = datetime.now() - feed['published']
+                pd = int(pd.total_seconds())
 
-            if pd <= 60:
-                pd = '%d секунд назад' % pd
+                if pd <= 60:
+                    pd = '%d секунд назад' % pd
 
-            elif pd <= 60*60:
-                pd = '%d минут назад' % pd/60
+                elif pd <= 60*60:
+                    pd = '%d минут назад' % pd/60
 
-            elif pd <= 60*60*24:
-                pd = pd/60/60
-                if pd == 1 or pd == 21:
-                    pd = '%d час назад' % pd
-                elif 5 > pd > 1 or pd > 21:
-                    pd = '%d часа назад' % pd
+                elif pd <= 60*60*24:
+                    pd = pd/60/60
+                    if pd == 1 or pd == 21:
+                        pd = '%d час назад' % pd
+                    elif 5 > pd > 1 or pd > 21:
+                        pd = '%d часа назад' % pd
+                    else:
+                        pd = '%d часов назад' % pd
                 else:
-                    pd = '%d часов назад' % pd
-            else:
-                pd = '%d день назад' % (pd/60/60/24)
+                    pd = '%d день назад' % (pd/60/60/24)
 
-            text = feed['title']
-            text += '\n'
-            text += pd
+                text = feed['title']
+                text += '\n'
+                text += pd
 
-            self.rss_grid.add_widget(ClickableLabel(
-                    text=text, link=feed['link'],
-                    font_size=20, text_size=(self.width/2, None)
-            ))
+                self.rss_grid.add_widget(ClickableLabel(
+                        text=text, link=feed['link'],
+                        font_size=20, text_size=(self.width/2, None)
+                ))
 
-            try:
-                image = feed['media_content'][0]['url']
-            except:
-                image = 'no_image.svg'
+                try:
+                    image = feed['media_content'][0]['url']
+                except:
+                    image = 'no_image.svg'
 
-            self.rss_grid.add_widget(ClickableImage(
-                source=image, link=feed['link'],
-                size_hint_y=None, height=150
-            ))
+                self.rss_grid.add_widget(ClickableImage(
+                    source=image, link=feed['link'],
+                    size_hint_y=None, height=150
+                ))
 
-            if not feeds:
-                self.remove_widget(self.action_button)
+                if not feeds:
+                    self.remove_widget(self.action_button)
+        else:
+            self.rss_grid.add_widget(Label(text="Выберите категорию"))
+            self.remove_widget(self.action_button)
 
 
     def search_feed(self):
         self.rss_grid.clear_widgets()
+        # search_init = False
+        # if not :
+        #     self.feeds = self.all_feeds
+        #     self.show_more()
+        if self.search.text:
+            search_init = True
+            match_feeds = []
 
-        if not self.search.text:
+            for feed in self.all_feeds:
+                if self.search.text.lower() in feed['title'].lower():
+                    match_feeds.append(feed)
+
+            if match_feeds:
+                self.show_more(feeds=match_feeds)
+            else:
+                self.rss_grid.add_widget(Label(text="По Вашему запросу ничего не найдено"))
+
+            self.search_previous = self.search.text
+        elif self.search_previous:
             self.feeds = self.all_feeds
             self.show_more()
-
-        match_feeds = []
-
-        for feed in self.all_feeds:
-            if self.search.text.lower() in feed['title'].lower():
-                match_feeds.append(feed)
-        print([m['title'] for m in match_feeds])
-
-        if match_feeds:
-            self.show_more(feeds=match_feeds)
-        else:
-            self.rss_grid.add_widget(Label(text="По Вашему запросу ничего не найдено"))
-
+            self.add_widget(self.action_button)
 
 
 
@@ -167,15 +183,17 @@ class MyScreenManager(ScreenManager):
 
             self.get_screen('duo').add_widget(duobox)
             self.current = "duo"
-        else:
-            if football:
-                feeds = feedparser.parse('https://www.sport.ru/rssfeeds/football.rss')
-                title = "Футбол"
-            if hockey:
-                feeds = feedparser.parse('https://www.sport.ru/rssfeeds/hockey.rss')
-                title = "Хокей"
-
+        elif football:
+            feeds = feedparser.parse('https://www.sport.ru/rssfeeds/football.rss')
+            title = "Футбол"
             self.add_news_screen(feeds['entries'], title)
+        elif hockey:
+            feeds = feedparser.parse('https://www.sport.ru/rssfeeds/hockey.rss')
+            title = "Хокей"
+            self.add_news_screen(feeds['entries'], title)
+        else:
+            self.add_news_screen([], '')
+
 
 
 # sm = ScreenManager()
