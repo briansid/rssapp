@@ -34,9 +34,7 @@ class RssBox(BoxLayout):
         # if not feeds:
         #     feeds = self.feeds
         #     print('FEEEEEEEEDS')
-        if feeds and not isinstance(feeds, float):
-            feeds = self.feeds
-        else:
+        if not feeds or isinstance(feeds, float):
             feeds = self.feeds
         for feed in feeds[:5]:
             feeds.remove(feed)
